@@ -5,12 +5,12 @@
 }
 
 .panel{
-  background-color: #222;
+  background-color: #2b2f42;
   width: 20%;
 }
 
 .editor{
-  background-color: rgb(59, 64, 85);
+  background-color: #3b4055;
   padding: 10px;
   width: 40%;
   display: flex;
@@ -25,7 +25,8 @@
 
 
 .preview{
-  background-color:white;
+  background-color: #3b4055;
+  color: white;
   padding: 10px;
   width: 40%;
 }
