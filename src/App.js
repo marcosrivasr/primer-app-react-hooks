@@ -7,24 +7,29 @@ var Markdown = require('react-remarkable');
 function App() {
 
   const [items, setItems] = useState([]);
-  const [actual, setActual] = useState({});
   const [actualIndex, setActualIndex] = useState(-1);
-  const [autoSave, setAutoSave] = useState(true);
 
-  useEffect( () => {
+ /*  useEffect( () => {
     console.log('guardando...');
-  }, [autoSave]);
+  }, [autoSave]); */
 
   function handleNew(){
+    let notes = [...items];
     const note = {
       id: uuid(),
       title: '',
-      text: ''
+      text: '',
+      pinned: false,
+      created:Date.now()
     }
 
-    setItems([note,...items]);
+    notes.unshift(note);
+
+    notes = notes.sort( (a, b) => new Date(b.created) - new Date(a.created));
+    setItems([...notes]);
     setActualIndex(0);
   }
+
 
   function handleSelectNote(item){
     const index = items.findIndex( (note) => note == item);
@@ -50,6 +55,14 @@ function App() {
     setItems(notes);
   }
 
+  function handlePinned(index){
+    let notes = [...items];
+    notes[index].pinned = !notes[index].pinned;
+    
+    setItems(notes);
+
+  }
+
   function renderInterface(){
     return(
         <>
@@ -59,7 +72,7 @@ function App() {
             </div>
 
             <div className="editor-textarea">
-              <textarea onChange={handleTextChange} defaultValue={items[actualIndex].text}></textarea>
+              <textarea onChange={handleTextChange} value={items[actualIndex].text}></textarea>
             </div>
         </div>
 
@@ -87,7 +100,7 @@ function App() {
                             <div>
                             {item.title == ''? '[Sin título]': item.title}
                             </div>
-                            <div><button>Pin</button></div>
+                            <div><button onClick={ () => handlePinned(i) }>{item.pinned? 'Pinned': 'Pin'}</button></div>
                       </div>
             })
           }
