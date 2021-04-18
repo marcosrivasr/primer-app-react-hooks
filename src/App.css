@@ -5,13 +5,16 @@
 }
 
 .panel{
-  background-color: coral;
+  background-color: #222;
   width: 20%;
 }
 
 .editor{
-  background-color: white;
+  background-color: rgb(59, 64, 85);
+  padding: 10px;
   width: 40%;
+  display: flex;
+  flex-direction: column;
 }
 
 .editor input,
@@ -28,9 +31,50 @@
 }
 
 .note{
-  padding: 30px 10px;
+  color: white;
+  padding: 20px 10px;
+  display: flex; 
+  justify-content: space-between;
 }
 
 .activeNote{
-  background-color: cyan;
+  background-color: #2084e2;
+}
+
+.editor-textarea{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+textarea{
+  color: white;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+
+  outline: none;
+  border: none;
+
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.7;
+  font-size: 18px;
+  background-color: transparent;
+}
+
+input{
+  color: white;
+  box-sizing: border-box;
+  padding: 10px;
+  width: 100%;
+
+  border: none;
+  border-bottom: solid 2px #ccc;
+  margin-bottom: 20px;
+
+  font-size: 32px;
+  font-weight: bolder;
+  outline: none;
+
+  background-color: transparent;
 }

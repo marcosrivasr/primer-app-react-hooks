@@ -9,10 +9,11 @@ function App() {
   const [items, setItems] = useState([]);
   const [actual, setActual] = useState({});
   const [actualIndex, setActualIndex] = useState(-1);
+  const [autoSave, setAutoSave] = useState(true);
 
   useEffect( () => {
-    
-  }, [actualIndex]);
+    console.log('guardando...');
+  }, [autoSave]);
 
   function handleNew(){
     const note = {
@@ -57,8 +58,8 @@ function App() {
               <input onChange={handleTitleChange} value={ items[actualIndex].title }  />
             </div>
 
-            <div>
-              <textarea onChange={handleTextChange}>{items[actualIndex].text}</textarea>
+            <div className="editor-textarea">
+              <textarea onChange={handleTextChange} defaultValue={items[actualIndex].text}></textarea>
             </div>
         </div>
 
@@ -82,7 +83,12 @@ function App() {
             items.map((item, i) => {
               return <div key={item.id} 
                           className={(i == actualIndex)? 'note activeNote': 'note'}
-                          onClick={() => handleSelectNote(item)}>{item.title == ''? '[Sin título]': item.title}</div>
+                          onClick={() => handleSelectNote(item)}>
+                            <div>
+                            {item.title == ''? '[Sin título]': item.title}
+                            </div>
+                            <div><button>Pin</button></div>
+                      </div>
             })
           }
         </div>
