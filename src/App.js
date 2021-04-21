@@ -7,6 +7,7 @@ var Markdown = require('react-remarkable');
 function App() {
 
   const [items, setItems] = useState([]);
+  const [copyItems, setCopyItems] = useState([]);
   const [actualIndex, setActualIndex] = useState(-1);
 
  useEffect( () => {
@@ -28,6 +29,7 @@ function App() {
     let res = getOrderedNotes(notes);
     
     setItems(res);
+    setCopyItems(res);
 
     let index = res.findIndex(x => x.id == note.id);
     setActualIndex(index);
@@ -85,11 +87,32 @@ function App() {
     let res = getOrderedNotes(notes);
     
     setItems(res);
+    setCopyItems(res);
 
     let index = res.findIndex(x => x.id == id);
     console.log(i, index);
 
     setActualIndex(index);
+  }
+
+  function handleSearch(e){
+
+    const q = e.target.value;
+
+    if(q === ''){
+      setCopyItems([...items]);
+    }else{
+      setCopyItems([...items]);
+
+      let res = copyItems.filter(x => x.title.indexOf(q) >= 0 || x.text.indexOf(q) >= 0);
+
+      setCopyItems([...res]);
+      setActualIndex(0);
+    }
+
+
+
+
   }
 
   function renderInterface(){
@@ -119,12 +142,12 @@ function App() {
     <div className="App container">
       <div className="panel">
         <div className="menu">
-          <input className="search" placeholder="buscar..." />
+          <input className="search" onChange={ handleSearch } placeholder="buscar..." />
           <button className="btn" onClick={ e => handleNew()}>+ Nueva nota</button>
         </div>
         <div>
           {
-            items.map((item, i) => {
+            copyItems.map((item, i) => {
               return <div key={item.id} 
                           className={(i == actualIndex)? 'note activeNote': 'note'}
                           onClick={(e) => handleSelectNote(item, e)}>
