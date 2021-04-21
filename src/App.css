@@ -7,6 +7,7 @@
 .panel{
   background-color: #2b2f42;
   width: 20%;
+  padding: 10px 0;
 }
 
 .editor{
@@ -33,9 +34,49 @@
 
 .note{
   color: white;
-  padding: 20px 10px;
+  padding: 10px;
   display: flex; 
   justify-content: space-between;
+  cursor: pointer;
+}
+
+.note:hover{
+  background-color: #2084e2;
+}
+
+.menu{
+  padding: 10px;
+  text-align: right;
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.btn{
+  background: #152a88;
+  border: none;
+  border-radius: 3px;
+  padding: 10px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+.btn:hover{
+  background: #1f3cc0;
+}
+
+
+.pinButton{
+  background: #152a88;
+  border: none;
+  border-radius: 3px;
+  padding: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+.pinButton:hover{
+  background-color: #1f3cc0;
 }
 
 .activeNote{
@@ -48,7 +89,7 @@
   height: 100%;
 }
 
-textarea{
+.content{
   color: white;
   box-sizing: border-box;
   width: 100%;
@@ -63,7 +104,7 @@ textarea{
   background-color: transparent;
 }
 
-input{
+.title{
   color: white;
   box-sizing: border-box;
   padding: 10px;
@@ -78,4 +119,20 @@ input{
   outline: none;
 
   background-color: transparent;
+}
+
+.search{
+  color: white;
+  padding: 5px;
+  outline: none;
+  border-radius: 5px;
+  border: none;
+  width: 60%;
+  font-size: 16px;
+  background: #394168;
+
+}
+.search:focus{
+  background-color:transparent;
+  border: solid 1px #3f53b6;
 }

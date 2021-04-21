@@ -9,9 +9,9 @@ function App() {
   const [items, setItems] = useState([]);
   const [actualIndex, setActualIndex] = useState(-1);
 
- /*  useEffect( () => {
-    console.log('guardando...');
-  }, [autoSave]); */
+ useEffect( () => {
+    console.log('index cambiado ', actualIndex);
+  }, [actualIndex]);
 
   function handleNew(){
     let notes = [...items];
@@ -25,13 +25,34 @@ function App() {
 
     notes.unshift(note);
 
-    notes = notes.sort( (a, b) => new Date(b.created) - new Date(a.created));
-    setItems([...notes]);
-    setActualIndex(0);
+    let res = getOrderedNotes(notes);
+    
+    setItems(res);
+
+    let index = res.findIndex(x => x.id == note.id);
+    setActualIndex(index);
+  }
+
+  function sortByDate(arr, asc = false){
+
+    if(asc) return arr.sort( (a, b) => new Date(b.created) - new Date(a.created) && b.pinned);
+    return arr.sort( (a, b) => new Date(a.created) - new Date(b.created));
+  }
+
+  function getOrderedNotes(arr){
+    let items = [...arr];
+    let pinned = items.filter(x => x.pinned === true);
+    let rest = items.filter(x => x.pinned === false);
+
+    pinned = sortByDate(pinned, true);
+    rest = sortByDate(rest, true);
+
+    return [...pinned, ...rest];
   }
 
 
-  function handleSelectNote(item){
+  function handleSelectNote(item, e){
+    if(!e.target.classList.contains('note')) return;
     const index = items.findIndex( (note) => note == item);
     
     setActualIndex(index);
@@ -55,12 +76,20 @@ function App() {
     setItems(notes);
   }
 
-  function handlePinned(index){
+  function handlePinned(item, i){
+    setActualIndex(i);
+    let id = item.id;
     let notes = [...items];
-    notes[index].pinned = !notes[index].pinned;
-    
-    setItems(notes);
+    notes[i].pinned = !notes[i].pinned;
 
+    let res = getOrderedNotes(notes);
+    
+    setItems(res);
+
+    let index = res.findIndex(x => x.id == id);
+    console.log(i, index);
+
+    setActualIndex(index);
   }
 
   function renderInterface(){
@@ -68,11 +97,11 @@ function App() {
         <>
           <div className="editor">
             <div>
-              <input onChange={handleTitleChange} value={ items[actualIndex].title }  />
+              <input className="title" onChange={handleTitleChange} value={ items[actualIndex].title } />
             </div>
 
             <div className="editor-textarea">
-              <textarea onChange={handleTextChange} value={items[actualIndex].text}></textarea>
+              <textarea className="content" onChange={handleTextChange} value={items[actualIndex].text}></textarea>
             </div>
         </div>
 
@@ -89,18 +118,20 @@ function App() {
   return (
     <div className="App container">
       <div className="panel">
-        <button onClick={ e => handleNew()}>Nueva nota</button>
-
+        <div className="menu">
+          <input className="search" placeholder="buscar..." />
+          <button className="btn" onClick={ e => handleNew()}>+ Nueva nota</button>
+        </div>
         <div>
           {
             items.map((item, i) => {
               return <div key={item.id} 
                           className={(i == actualIndex)? 'note activeNote': 'note'}
-                          onClick={() => handleSelectNote(item)}>
+                          onClick={(e) => handleSelectNote(item, e)}>
                             <div>
-                            {item.title == ''? '[Sin título]': item.title}
+                            {item.title == ''? '[Sin título]': item.title.substring(0,20)}
                             </div>
-                            <div><button onClick={ () => handlePinned(i) }>{item.pinned? 'Pinned': 'Pin'}</button></div>
+                            <div><button className="pinButton" onClick={ () => handlePinned(item, i) }>{item.pinned? 'Pinned': 'Pin'}</button></div>
                       </div>
             })
           }
