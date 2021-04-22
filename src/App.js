@@ -1,8 +1,17 @@
 
 import './App.css';
-import { useEffect, useState } from 'react';
+import Item from './components/item';
+import List from './components/list';
+import Editor from './components/editor';
+import Preview from './components/preview';
+import useDocumentTitle from './components/documentitle';
+import Panel  from './components/panel';
+import Menu from './components/menu';
+import { useEffect, useState, React } from 'react';
 import uuid from 'react-uuid';
-var Markdown = require('react-remarkable');
+import ItemsContext from './components/items-context';
+
+
 
 function App() {
 
@@ -10,11 +19,12 @@ function App() {
   const [copyItems, setCopyItems] = useState([]);
   const [actualIndex, setActualIndex] = useState(-1);
 
- useEffect( () => {
-    console.log('index cambiado ', actualIndex);
-  }, [actualIndex]);
+
+  useDocumentTitle(items[actualIndex]?.title, 'Notes');
+
 
   function handleNew(){
+    console.log('Hola');
     let notes = [...items];
     const note = {
       id: uuid(),
@@ -49,6 +59,7 @@ function App() {
     pinned = sortByDate(pinned, true);
     rest = sortByDate(rest, true);
 
+    setCopyItems(...pinned, ...rest);
     return [...pinned, ...rest];
   }
 
@@ -118,49 +129,46 @@ function App() {
   function renderInterface(){
     return(
         <>
-          <div className="editor">
-            <div>
-              <input className="title" onChange={handleTitleChange} value={ items[actualIndex].title } />
-            </div>
-
-            <div className="editor-textarea">
-              <textarea className="content" onChange={handleTextChange} value={items[actualIndex].text}></textarea>
-            </div>
-        </div>
-
-        <div className="preview ">
-          <Markdown source={ items[actualIndex].text } />
-            <div></div>
-        </div>
-      </>
+          <Editor item={items[actualIndex]} onTitleChanged={ handleTitleChange } onTextChanged={ handleTextChange } />
+          <Preview text={ items[actualIndex].text } />
+        </>
     );
   }
 
-
-
   return (
     <div className="App container">
-      <div className="panel">
+      <ItemsContext.Provider value={{items:items, onNew: handleNew, onSearch: handleSearch}}>
+        <Panel>
+          <Menu />
+          <List>
+          {
+            copyItems.map((item, i) => {
+              return <Item key={i} 
+                          actualIndex={actualIndex} 
+                          item={item} 
+                          index={i} 
+                          onHandlePinned={handlePinned} 
+                          onHandleSelectNote={handleSelectNote}></Item>
+            })
+          }
+        </List>
+        </Panel>
+      </ItemsContext.Provider>
+      {/* <div className="panel">
         <div className="menu">
           <input className="search" onChange={ handleSearch } placeholder="buscar..." />
           <button className="btn" onClick={ e => handleNew()}>+ Nueva nota</button>
         </div>
-        <div>
+        <List>
           {
             copyItems.map((item, i) => {
-              return <div key={item.id} 
-                          className={(i == actualIndex)? 'note activeNote': 'note'}
-                          onClick={(e) => handleSelectNote(item, e)}>
-                            <div>
-                            {item.title == ''? '[Sin título]': item.title.substring(0,20)}
-                            </div>
-                            <div><button className="pinButton" onClick={ () => handlePinned(item, i) }>{item.pinned? 'Pinned': 'Pin'}</button></div>
-                      </div>
+              return <Item key={i} actualIndex={actualIndex} item={item} index={i} onHandlePinned={handlePinned} onHandleSelectNote={handleSelectNote}></Item>
             })
           }
-        </div>
+        </List>
       </div>
-      {actualIndex >= 0? renderInterface(): ''}
+       */}
+       {actualIndex >= 0? renderInterface(): ''}
     </div>
   );
 }

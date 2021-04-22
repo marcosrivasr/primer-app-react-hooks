@@ -40,9 +40,6 @@
   cursor: pointer;
 }
 
-.note:hover{
-  background-color: #2084e2;
-}
 
 .menu{
   padding: 10px;
@@ -53,7 +50,7 @@
 }
 
 .btn{
-  background: #152a88;
+  background: #2b5b88;
   border: none;
   border-radius: 3px;
   padding: 10px;
@@ -62,12 +59,12 @@
   cursor: pointer;
 }
 .btn:hover{
-  background: #1f3cc0;
+  background: #3d87cc;
 }
 
 
 .pinButton{
-  background: #152a88;
+  background: #2b5b88;
   border: none;
   border-radius: 3px;
   padding: 5px;
@@ -76,7 +73,7 @@
 }
 
 .pinButton:hover{
-  background-color: #1f3cc0;
+  background-color: #3d87cc;
 }
 
 .activeNote{
