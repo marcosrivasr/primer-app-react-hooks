@@ -10,7 +10,8 @@ import Menu from './components/menu';
 import { useEffect, useState, React } from 'react';
 import uuid from 'react-uuid';
 import ItemsContext from './components/items-context';
-import {get, post} from './libs/http';
+import StatusContext from './components/status-context';
+import {get, post, put} from './libs/http';
 
 
 
@@ -19,8 +20,10 @@ function App() {
   const [items, setItems] = useState([]);
   const [copyItems, setCopyItems] = useState([]);
   const [actualIndex, setActualIndex] = useState(-1);
+  const [lock, setLock] = useState(false);
+  const [status, setStatus] = useState(0);
 
-  const URL = 'http://localhost:3010/'
+  const URL = 'http://localhost:3010/';
 
   useDocumentTitle(items[actualIndex]?.title, 'Notes');
 
@@ -136,25 +139,44 @@ function App() {
   }
 
   function autosave(){
-    console.log('cambio documento');
+    console.log('autosave', lock);
+    if(!lock){
+      setLock(true);
+      setStatus(1);
+      setTimeout( () => {
+        save();
+        setLock(false);
+      }, 3000);
+    }
   }
 
-  function save(){
+  async function save(){
+    const item = items[actualIndex];
 
+    const response = await put(`${URL}update`, item);
+    
+    setStatus(2);
+
+    setTimeout(() => {
+      setStatus(0);
+    }, 1000);
+
+    console.log(response);
   }
 
-  function renderInterface(){
+  function renderEditorInterface(){
     return(
         <>
-          <Editor item={items[actualIndex]} onTitleChanged={ handleTitleChange } onTextChanged={ handleTextChange } />
-          <Preview text={ items[actualIndex].text } />
+          <StatusContext.Provider value={status}>
+            <Editor item={items[actualIndex]} onTitleChanged={ handleTitleChange } onTextChanged={ handleTextChange } />
+            <Preview text={ items[actualIndex].text } />
+          </StatusContext.Provider>
         </>
     );
   }
 
-  return (
-    <div className="App container">
-      <ItemsContext.Provider value={{items:items, onNew: handleNew, onSearch: handleSearch, autosave:autosave}}>
+  function renderSideMenuInterface(){
+    return (
         <Panel>
           <Menu />
           <List>
@@ -168,9 +190,16 @@ function App() {
                           onHandleSelectNote={handleSelectNote} />
             })
           }
-        </List>
+         </List>
         </Panel>
-        {actualIndex >= 0? renderInterface(): ''}
+    );
+  }
+
+  return (
+    <div className="App container">
+      <ItemsContext.Provider value={{items:items, onNew: handleNew, onSearch: handleSearch, autosave:autosave}}>
+        {renderSideMenuInterface()}
+        {actualIndex >= 0? renderEditorInterface(): ''}
       </ItemsContext.Provider>
        
     </div>
