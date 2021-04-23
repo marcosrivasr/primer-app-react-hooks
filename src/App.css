@@ -133,3 +133,8 @@
   background-color:transparent;
   border: solid 1px #3f53b6;
 }
+
+.statusCodeContainer{
+  color: white;
+  height: 25px;
+}
