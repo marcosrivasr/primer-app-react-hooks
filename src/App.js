@@ -10,6 +10,7 @@ import Menu from './components/menu';
 import { useEffect, useState, React } from 'react';
 import uuid from 'react-uuid';
 import ItemsContext from './components/items-context';
+import {get, post} from './libs/http';
 
 
 
@@ -19,12 +20,22 @@ function App() {
   const [copyItems, setCopyItems] = useState([]);
   const [actualIndex, setActualIndex] = useState(-1);
 
+  const URL = 'http://localhost:3010/'
 
   useDocumentTitle(items[actualIndex]?.title, 'Notes');
 
+  useEffect( async ()  => {
+    await getItems();
+  }, []);
 
-  function handleNew(){
-    console.log('Hola');
+  async function getItems(){
+    const data = await get(`${URL}`);
+    setItems(data);
+    setCopyItems(data);
+    if(items.length > 0) setActualIndex(0);
+  }
+
+  async function handleNew(){
     let notes = [...items];
     const note = {
       id: uuid(),
@@ -33,7 +44,7 @@ function App() {
       pinned: false,
       created:Date.now()
     }
-
+    
     notes.unshift(note);
 
     let res = getOrderedNotes(notes);
@@ -43,6 +54,9 @@ function App() {
 
     let index = res.findIndex(x => x.id == note.id);
     setActualIndex(index);
+
+    const data = await post('http://localhost:3010/new', note);
+    console.log(data); 
   }
 
   function sortByDate(arr, asc = false){
@@ -101,7 +115,6 @@ function App() {
     setCopyItems(res);
 
     let index = res.findIndex(x => x.id == id);
-    console.log(i, index);
 
     setActualIndex(index);
   }
@@ -120,9 +133,13 @@ function App() {
       setCopyItems([...res]);
       setActualIndex(0);
     }
+  }
 
+  function autosave(){
+    console.log('cambio documento');
+  }
 
-
+  function save(){
 
   }
 
@@ -137,7 +154,7 @@ function App() {
 
   return (
     <div className="App container">
-      <ItemsContext.Provider value={{items:items, onNew: handleNew, onSearch: handleSearch}}>
+      <ItemsContext.Provider value={{items:items, onNew: handleNew, onSearch: handleSearch, autosave:autosave}}>
         <Panel>
           <Menu />
           <List>
@@ -148,27 +165,14 @@ function App() {
                           item={item} 
                           index={i} 
                           onHandlePinned={handlePinned} 
-                          onHandleSelectNote={handleSelectNote}></Item>
+                          onHandleSelectNote={handleSelectNote} />
             })
           }
         </List>
         </Panel>
+        {actualIndex >= 0? renderInterface(): ''}
       </ItemsContext.Provider>
-      {/* <div className="panel">
-        <div className="menu">
-          <input className="search" onChange={ handleSearch } placeholder="buscar..." />
-          <button className="btn" onClick={ e => handleNew()}>+ Nueva nota</button>
-        </div>
-        <List>
-          {
-            copyItems.map((item, i) => {
-              return <Item key={i} actualIndex={actualIndex} item={item} index={i} onHandlePinned={handlePinned} onHandleSelectNote={handleSelectNote}></Item>
-            })
-          }
-        </List>
-      </div>
-       */}
-       {actualIndex >= 0? renderInterface(): ''}
+       
     </div>
   );
 }
