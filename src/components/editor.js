@@ -1,9 +1,15 @@
 
+import React, {useContext} from 'react';
+import ItemsContext from './items-context';
+
 
 export default function Editor({item, onTitleChanged, onTextChanged}){
 
+    const itemsContext = useContext(ItemsContext);
+
     function handleTitleChange(e){
         onTitleChanged(e);
+        itemsContext.autosave();
     }
 
     function handleTextChange(e){
