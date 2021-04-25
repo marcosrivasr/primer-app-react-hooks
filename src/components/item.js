@@ -14,10 +14,10 @@ export default function Item({item, actualIndex, index, onHandlePinned, onHandle
 
     return (
         <div key={item.id} 
-            className={(index == actualIndex)? 'note activeNote': 'note'}
+            className={(index === actualIndex)? 'note activeNote': 'note'}
             onClick={(e) => handleSelectNote(item, e)}>
             <div>
-                {item.title == ''? '[Sin título]': item.title.substring(0,20)}
+                {item.title === ''? '[Sin título]': item.title.substring(0,20)}
             </div>
             <div>
                 <button className="pinButton" onClick={ () => handlePinned(item, index) }>
