@@ -27,14 +27,15 @@ function App() {
 
   useDocumentTitle(items[actualIndex]?.title, 'Notes');
 
-  useEffect( async ()  => {
-    await getItems();
+  useEffect( ()  => {
+    getItems();
   }, []);
 
   async function getItems(){
-    const data = await get(`${URL}`);
-    setItems(data);
-    setCopyItems(data);
+    let data = await get(`${URL}`);
+    let res = getOrderedNotes(data);
+    setItems(res);
+    setCopyItems(res);
     if(items.length > 0) setActualIndex(0);
   }
 
@@ -76,7 +77,7 @@ function App() {
     pinned = sortByDate(pinned, true);
     rest = sortByDate(rest, true);
 
-    setCopyItems(...pinned, ...rest);
+    //setCopyItems(...pinned, ...rest);
     return [...pinned, ...rest];
   }
 
@@ -197,7 +198,7 @@ function App() {
 
   return (
     <div className="App container">
-      <ItemsContext.Provider value={{items:items, onNew: handleNew, onSearch: handleSearch, autosave:autosave}}>
+      <ItemsContext.Provider value={{onNew: handleNew, onSearch: handleSearch, autosave:autosave}}>
         {renderSideMenuInterface()}
         {actualIndex >= 0? renderEditorInterface(): ''}
       </ItemsContext.Provider>
