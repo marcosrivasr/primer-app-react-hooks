@@ -2,6 +2,7 @@
 .container{
   display: flex;
   height: 100vh;
+  background-color: #3b4055;
 }
 
 .panel{
