@@ -134,8 +134,13 @@ function App() {
 
       let res = copyItems.filter(x => x.title.indexOf(q) >= 0 || x.text.indexOf(q) >= 0);
 
-      setCopyItems([...res]);
-      setActualIndex(0);
+      if(res.length == 0){
+        setActualIndex(-1);
+      }else{
+        setCopyItems([...res]);
+        setActualIndex(0);
+      }
+
     }
   }
 
